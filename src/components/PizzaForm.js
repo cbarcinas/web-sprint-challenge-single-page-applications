@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios'
+import axios from "axios";
 import * as yup from "yup";
 
 // form validation
@@ -7,7 +7,7 @@ const formSchema = yup.object().shape({
   name: yup.string().required("Name is a required field"),
   size: yup.string().required("Select a Size"),
   pepperoni: yup.boolean().defined(),
-  sasuage: yup.boolean().defined(),
+  sausage: yup.boolean().defined(),
   bacon: yup.boolean().defined(),
   ham: yup.boolean().defined(),
   special: yup.string().notRequired(),
@@ -47,7 +47,7 @@ const PizzaForm = () => {
     };
 
     validateChange(e);
-    setFormState(newFormData);
+    setFormState(newFormState);
   };
 
   useEffect(() => {
@@ -96,7 +96,7 @@ const PizzaForm = () => {
     <>
       <h1>Build Your Pizza</h1>
       <div>
-        <form>
+        <form onSubmit={formSubmit}>
           <div>
             <h2>Choose Size :</h2>
             <select>
@@ -163,11 +163,14 @@ const PizzaForm = () => {
                 name="special"
                 id="special"
                 placeholder="specify instructions here..."
-                //   value={formState.special}
-                //   onChange={inputChange}
+                value={formState.special}
+                onChange={inputChange}
               />
             </label>
           </div>
+          <button id="submit" disabled={buttonDisabled}>
+            Submit
+          </button>
         </form>
       </div>
     </>
