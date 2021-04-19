@@ -6,6 +6,7 @@ const Home = () => {
   return (
     <div>
       <style.Container>
+        <div>
         <style.Nav>
             <style.Logo textColor="white">Lambda Eats</style.Logo>        
           <style.NavLinks>
@@ -19,8 +20,9 @@ const Home = () => {
         </style.Nav>
 
         <Link to="/pizza">
-          <button>Order</button>
+          <style.OrderButton>Order</style.OrderButton>
         </Link>
+        </div>
       </style.Container>
     </div>
   );

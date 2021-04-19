@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios'
 import * as yup from "yup";
 
 // form validation
 const formSchema = yup.object().shape({
-  name: yup.string().required(),
-  size: yup.string().required(),
+  name: yup.string().required("Name is a required field"),
+  size: yup.string().required("Select a Size"),
   pepperoni: yup.boolean().defined(),
   sasuage: yup.boolean().defined(),
   bacon: yup.boolean().defined(),
@@ -22,6 +23,74 @@ const PizzaForm = () => {
     ham: false,
     special: "",
   });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    size: "",
+    pepperoni: "",
+    sasuage: "",
+    bacon: "",
+    ham: "",
+    special: "",
+  });
+
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [post, setPost] = useState([]);
+
+  //   Input change
+
+  const inputChange = (e) => {
+    const newFormState = {
+      ...formState,
+      [e.target.name]:
+        e.target.type === "checkbox" ? e.target.checked : e.target.value,
+    };
+
+    validateChange(e);
+    setFormState(newFormData);
+  };
+
+  useEffect(() => {
+    formSchema.isValid(formState).then((valid) => {
+      setButtonDisabled(!valid);
+    });
+  }, [formState]);
+
+  //   on Submit
+
+  const formSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("https://reqres.in/api/users", formState)
+      .then((res) => {
+        setPost(res.data);
+        console.log("success", post);
+        console.log(res.data.size);
+        setFormState({
+          name: "",
+          size: res.data.size,
+          pepperoni: false,
+          sausage: false,
+          bacon: false,
+          ham: false,
+          special: "",
+        });
+      })
+      .catch((err) => console.log(err.response));
+  };
+
+  //  Form Validation
+  const validateChange = (e) => {
+    yup
+      .reach(formSchema, e.target.name)
+      .validate(e.target.value)
+      .then(() => {
+        setErrors({ ...errors, [e.target.name]: "" });
+      })
+      .catch((err) => {
+        setErrors({ ...errors, [e.target.name]: err.errors[0] });
+      });
+  };
 
   return (
     <>
@@ -48,19 +117,19 @@ const PizzaForm = () => {
                 type="checkbox"
                 name="pepperoni"
                 id="pepperoniCheckBox"
-                //   checked={formState.pepperoni}
-                //   onChange={inputChange}
+                checked={formState.pepperoni}
+                onChange={inputChange}
               />
               Pepperoni
             </label>
 
-            <label htmlFor="sasuage">
+            <label htmlFor="sausage">
               <input
                 type="checkbox"
-                name="Sasuage"
-                id="SasuageCheckBox"
-                //   checked={formState.sasuage}
-                //   onChange={inputChange}
+                name="sausage"
+                id="sausageCheckBox"
+                checked={formState.sausage}
+                onChange={inputChange}
               />
               Sasuage
             </label>
@@ -70,8 +139,8 @@ const PizzaForm = () => {
                 type="checkbox"
                 name="bacon"
                 id="baconCheckBox"
-                //   checked={formState.bacon}
-                //   onChange={inputChange}
+                checked={formState.bacon}
+                onChange={inputChange}
               />
               Bacon
             </label>
@@ -81,8 +150,8 @@ const PizzaForm = () => {
                 type="checkbox"
                 name="ham"
                 id="hamCheckBox"
-                //   checked={formState.ham}
-                //   onChange={inputChange}
+                checked={formState.ham}
+                onChange={inputChange}
               />
               Ham
             </label>
